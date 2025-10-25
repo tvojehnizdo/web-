@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tvoje Hnízdo — Prémiový náhled</title>
+  <meta name="description" content="Tvoje Hnízdo / Bronekstav s.r.o. — moderní dřevostavby: projekt, prefabrikace, montáž. Rychle, přesně a čitelně. Nezávazná konzultace a konfigurátor domů.">
+  <link rel="canonical" href="https://tvojehnizdo.com/">
+  <meta name="theme-color" content="#0ea5e9">
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tvoje Hnízdo — Domy nové generace">
+  <meta property="og:description" content="Moderní dřevostavby a prefabrikace. Konfigurátor domů, rychlá nabídka a profesionální proces.">
+  <meta property="og:url" content="https://tvojehnizdo.com/">
+  <meta property="og:image" content="https://tvojehnizdo.com/img/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tvoje Hnízdo — Domy nové generace">
+  <meta name="twitter:description" content="Moderní dřevostavby a prefabrikace. Konfigurátor domů, rychlá nabídka a profesionální proces.">
+  <meta name="twitter:image" content="https://tvojehnizdo.com/img/og-image.jpg">
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%230ea5e9' d='M6 22V12l10-7 10 7v10h-3v-8.6L16 8l-7 5.4V22H6z'/></svg>">
+  <!-- Fonts & libs -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .hero-bg { background-image: linear-gradient(180deg, rgba(15,23,42,.7), rgba(15,23,42,.7)), url('https://83cc1b8482.clvaw-cdnwnd.com/e4e251f8863b1bbbf7ef27916ebce9ac/200000043-7f0e77f0e9/pozad%C3%AD%20web.png?ph=83cc1b8482'); background-size: cover; background-position: center; }
+    .nav-link { @apply text-[16px] font-semibold tracking-wide hover:text-yellow-300 transition; }
+    @media (prefers-color-scheme: dark) {
+      body { background-color:#0b1120; color:#f1f5f9; }
+      header { background:linear-gradient(90deg,#0b2a45,#164e63,#075985); }
+      .hero-bg { background-image: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.8)), url('https://83cc1b8482.clvaw-cdnwnd.com/e4e251f8863b1bbbf7ef27916ebce9ac/200000043-7f0e77f0e9/pozad%C3%AD%20web.png?ph=83cc1b8482'); }
+      section, .bg-white, .bg-gradient-to-br, .bg-sky-50, .bg-white\/90, .bg-white\/70 { background-color:#111827!important; color:#f1f5f9!important; }
+      footer { background:linear-gradient(90deg,#082f49,#0e7490,#0369a1); }
+      a { color:#38bdf8; }
+      input, textarea { background:#1e293b; color:#f1f5f9; border-color:#334155; }
+    }
+  </style>
+  <script type="application/ld+json">{
+    "@context":"https://schema.org",
+    "@type":"HomeAndConstructionBusiness",
+    "name":"Tvoje Hnízdo",
+    "url":"https://tvojehnizdo.com",
+    "areaServed":"CZ",
+    "telephone":"+420703808211",
+    "email":"info@tvojehnízdo.cz",
+    "address":{"@type":"PostalAddress","addressCountry":"CZ"}
+  }</script>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors">
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 bg-gradient-to-r from-sky-700 via-sky-600 to-sky-500 text-white shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-4 flex items-center justify-between" x-data="{ open:false }">
+      <a href="#" class="flex items-center gap-3">
+        <svg class="h-10 w-auto text-white/95 drop-shadow" viewBox="0 0 160 32" role="img" aria-label="Tvoje Hnízdo logo"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e5f3ff"/></linearGradient></defs><g fill="currentColor"><path d="M8 22V12l12-9 12 9v10h-4V13.6L20 7l-8 6.6V22H8z"/></g><text x="40" y="22" font-family="Inter, system-ui" font-weight="800" font-size="16" fill="url(#g)">Tvoje Hnízdo</text></svg>
+      </a>
+      <nav class="hidden md:flex items-center gap-9 text-[16px] font-semibold tracking-wide">
+        <a href="#uvod" class="nav-link">Úvod</a>
+        <a href="#nabidka" class="nav-link">Nabídka domů</a>
+        <a href="#technologie" class="nav-link">Technologie</a>
+        <a href="#prace" class="nav-link">Naše práce</a>
+        <div class="relative" @mouseleave="open=false">
+          <button @click="open=!open" class="nav-link inline-flex items-center gap-1">
+            Více <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          <div x-show="open" x-transition class="absolute right-0 mt-2 w-72 rounded-xl border border-white/20 bg-white/90 backdrop-blur-xl shadow-2xl overflow-hidden ring-1 ring-sky-100 dark:bg-slate-800 dark:text-slate-100">
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#onas">O nás</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#rozsah">Rozsah dodávky</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#stavesam">Stavebnice domů (StavSám)</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#dotace">Dotační programy</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#partner">Partnerský program</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#faq">FAQ</a>
+            <a class="block px-5 py-3 hover:bg-sky-100/70 dark:hover:bg-sky-900/40" href="#kontakt">Kontakt</a>
+          </div>
+        </div>
+      </nav>
+      <a href="#konfigurator" class="hidden md:inline-flex items-center rounded-xl px-6 py-3 bg-yellow-400 text-sky-900 font-bold text-[17px] shadow hover:bg-yellow-300 transition">Konfigurátor domů</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="uvod" class="hero-bg text-white" data-aos="fade-up">
+    <div class="mx-auto max-w-7xl px-4 py-24 md:py-32">
+      <div class="max-w-2xl">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Stavíme pro vaše pohodlné bydlení.</h1>
+        <p class="mt-5 text-lg/relaxed text-white/90">Jsme rodinná firma pro moderní dřevostavby. Navrhujeme, vyrábíme a stavíme domy, které jsou krásné, funkční a přizpůsobené vašim potřebám.</p>
+        <p class="mt-3 text-white/80">Klademe důraz na individuální přístup, precizní provedení a férovou komunikaci v každém kroku.</p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="#konfigurator" class="rounded-xl px-6 py-3 bg-yellow-400 text-sky-900 font-bold shadow-lg hover:bg-yellow-300 transition">Konfigurátor domů</a>
+          <a href="#kontakt" class="rounded-xl px-6 py-3 border border-white/30 text-white font-semibold hover:bg-white/10 transition">Kontaktujte nás</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONFIGURÁTOR -->
+  <section id="konfigurator" class="bg-gradient-to-br from-white via-sky-50 to-white border-y py-16" x-data="{ m2:100, faze:'NAKLIC' }" data-aos="fade-up">
+    <div class="mx-auto max-w-7xl px-4 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold">Konfigurátor domů</h2>
+        <div class="mt-6 space-y-4">
+          <label class="block text-sm font-medium">Plocha (m²)</label>
+          <input type="range" min="30" max="250" step="1" x-model="m2" class="w-full accent-sky-600">
+          <div class="text-sm text-slate-700">Aktuálně: <strong x-text="m2"></strong> m²</div>
+          <label class="block text-sm font-medium mt-6">Fáze</label>
+          <div class="flex gap-2">
+            <button @click="faze='HRUBA'" :class="faze==='HRUBA' ? 'bg-sky-600 text-white' : 'bg-slate-100'" class="px-3 py-2 rounded-xl shadow-sm hover:shadow-md transition">Hrubá stavba</button>
+            <button @click="faze='KDOKONCENI'" :class="faze==='KDOKONCENI' ? 'bg-sky-600 text-white' : 'bg-slate-100'" class="px-3 py-2 rounded-xl shadow-sm hover:shadow-md transition">K dokončení</button>
+            <button @click="faze='NAKLIC'" :class="faze==='NAKLIC' ? 'bg-sky-600 text-white' : 'bg-slate-100'" class="px-3 py-2 rounded-xl shadow-sm hover:shadow-md transition">Na klíč</button>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 rounded-2xl border bg-white/70 backdrop-blur shadow-lg">
+        <h3 class="font-semibold">Orientační cena (bez DPH)</h3>
+        <div class="mt-4 text-4xl font-extrabold text-slate-900" x-text="(m2 * window.TH_PRICES[faze]).toLocaleString('cs-CZ') + ' Kč'"></div>
+        <a href="#kontakt" class="mt-6 inline-flex rounded-xl px-5 py-3 bg-sky-600 text-white shadow hover:bg-sky-700 transition">Chci přesnou nabídku</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NABÍDKA DOMŮ -->
+  <section id="nabidka" class="mx-auto max-w-7xl px-4 py-16" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl font-bold">Nabídka domů</h2>
+    <p class="mt-2 text-slate-600 dark:text-slate-300">Typové i individuální projekty. Každý dům lze upravit podle vašich priorit.</p>
+    <div class="mt-8 grid md:grid-cols-3 gap-6">
+      <article class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="50">
+        <h3 class="font-semibold">Bungalov 3+kk</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Úsporné a pohodlné bydlení pro rodinu.</p>
+      </article>
+      <article class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="100">
+        <h3 class="font-semibold">Patrový 4–5+kk</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Dostatek prostoru, důraz na světlo a úložné plochy.</p>
+      </article>
+      <article class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm hover:shadow-md transition" data-aos="zoom-in" data-aos-delay="150">
+        <h3 class="font-semibold">Dvojdům</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Efektivní řešení pro developerské záměry.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- TECHNOLOGIE -->
+  <section id="technologie" class="bg-white border-y py-16 dark:bg-slate-800/40" data-aos="fade-up">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 class="text-3xl md:text-4xl font-bold">Technologie</h2>
+      <ul class="mt-6 grid md:grid-cols-3 gap-4 text-slate-700 dark:text-slate-300">
+        <li class="p-4 rounded-xl border bg-slate-50/60 dark:bg-slate-900/40">Dřevěná rámová konstrukce (KVH/C24), OSB, moderní izolace.</li>
+        <li class="p-4 rounded-xl border bg-slate-50/60 dark:bg-slate-900/40">Suché procesy a prefabrikace — zkrácení času na staveništi.</li>
+        <li class="p-4 rounded-xl border bg-slate-50/60 dark:bg-slate-900/40">Důsledné měření a kontrola kvality, sledování materiálů.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PRO DEVELOPERY -->
+  <section id="developer" class="mx-auto max-w-7xl px-4 py-16" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl font-bold">Pro developery</h2>
+    <p class="mt-2 text-slate-600 dark:text-slate-300 max-w-3xl">Nabízíme kapacitní panelovou výrobu, pilotní projekty a škálování výstavby na desítky domů ročně. Transparentní řízení, pevné termíny, reporting.</p>
+    <div class="mt-8 grid md:grid-cols-3 gap-6">
+      <div class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <h3 class="font-semibold">Dodávky panelů / modulů</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Výroba obvodových a vnitřních panelů, střešní a stropní dílce, logistika a just-in-time dodávky.</p>
+      </div>
+      <div class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <h3 class="font-semibold">Pilot & ramp-up</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Pilotní dům / dvojdům, standardizace detailů, poté plynulé navyšování tempa montáže.</p>
+      </div>
+      <div class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <h3 class="font-semibold">Nabídky & lead-gen</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Automatizace cenotvorby, generování nabídek (DOCX), přidružené lead kampaně a reporting KPI.</p>
+      </div>
+    </div>
+    <div class="mt-8">
+      <a href="#kontakt" class="inline-flex rounded-xl px-5 py-3 bg-sky-600 text-white shadow hover:bg-sky-700 transition">Domluvit developerské jednání</a>
+    </div>
+  </section>
+
+  <!-- NAŠE PRÁCE (GALERIE) -->
+  <section id="prace" class="mx-auto max-w-7xl px-4 py-16" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl font-bold">Naše práce</h2>
+    <div class="mt-6 grid md:grid-cols-3 gap-4">
+      <img loading="lazy" src="https://83cc1b8482.clvaw-cdnwnd.com/e4e251f8863b1bbbf7ef27916ebce9ac/200000043-7f0e77f0e9/pozad%C3%AD%20web.png?ph=83cc1b8482" class="rounded-xl border" alt="Konstrukce">
+      <img loading="lazy" src="https://83cc1b8482.clvaw-cdnwnd.com/e4e251f8863b1bbbf7ef27916ebce9ac/200000028-c6582c6584/DSC05350-HDR-m%202.jpeg?ph=83cc1b8482" class="rounded-xl border" alt="Interiér">
+      <img loading="lazy" src="https://83cc1b8482.clvaw-cdnwnd.com/e4e251f8863b1bbbf7ef27916ebce9ac/200000043-7f0e77f0e9/pozad%C3%AD%20web.png?ph=83cc1b8482" class="rounded-xl border" alt="Konstrukce">
+    </div>
+  </section>
+
+  <!-- REFERENCE / TESTIMONIALS -->
+  <section id="reference" class="bg-white border-y py-16 dark:bg-slate-800/40" data-aos="fade-up">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 class="text-3xl md:text-4xl font-bold">Reference klientů</h2>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <figure class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-900/40 shadow-sm">
+          <blockquote class="text-slate-700 dark:text-slate-300">„Rychlá prefabrikace a perfektní komunikace. Dům stál v řádu dnů.“</blockquote>
+          <figcaption class="mt-3 text-sm text-slate-500">— Petra K., Vlašim</figcaption>
+        </figure>
+        <figure class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-900/40 shadow-sm">
+          <blockquote class="text-slate-700 dark:text-slate-300">„Transparentní ceny a čistá práce. Doporučuji pro rodinné domy.“</blockquote>
+          <figcaption class="mt-3 text-sm text-slate-500">— Martin S., Benešov</figcaption>
+        </figure>
+        <figure class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-900/40 shadow-sm">
+          <blockquote class="text-slate-700 dark:text-slate-300">„Skvělý přístup u developerského dvojdomu. Vše podle plánu.“</blockquote>
+          <figcaption class="mt-3 text-sm text-slate-500">— Eva a Tomáš, Praha-východ</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section id="kontakt" class="mx-auto max-w-7xl px-4 py-16" data-aos="fade-up">
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold">Kontakt</h2>
+        <ul class="mt-4 text-slate-700 dark:text-slate-300 space-y-2 text-[15px]">
+          <li><strong>Tvoje Hnízdo / Bronekstav s.r.o.</strong></li>
+          <li>Vlašim / Benešov a okolí • Zakázky po celé ČR</li>
+          <li>Tel.: +420&nbsp;703&nbsp;808&nbsp;211</li>
+          <li>E-mail: info@tvojehnízdo.cz</li>
+        </ul>
+      </div>
+      <form class="p-6 rounded-2xl border bg-white/90 dark:bg-slate-900/50 shadow-lg" onsubmit="window.submitLead(event)">
+        <h3 class="font-semibold text-lg">Napište nám</h3>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <input required name="jmeno" placeholder="Jméno" class="col-span-2 md:col-span-1 rounded-xl border px-3 py-2">
+          <input required name="email" type="email" placeholder="E-mail" class="col-span-2 md:col-span-1 rounded-xl border px-3 py-2">
+          <textarea name="zprava" class="col-span-2 rounded-xl border px-3 py-2" rows="5" placeholder="Jaký dům plánujete?"></textarea>
+        </div>
+        <button class="mt-4 rounded-xl px-5 py-3 bg-sky-600 text-white font-semibold shadow hover:bg-sky-700 transition">Odeslat</button>
+        <p id="formStatus" class="mt-3 text-sm text-slate-600 dark:text-slate-300"></p>
+      </form>
+    </div>
+  </section>
+
+    <!-- FAQ (podrobné) -->
+  <section id="faq" class="mx-auto max-w-7xl px-4 py-16" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl font-bold">Často kladené otázky</h2>
+    <div class="mt-6 grid md:grid-cols-2 gap-6">
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm" open>
+        <summary class="font-semibold cursor-pointer">Jak rychle umíte stavět?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Díky prefabrikaci montujeme hrubou stavbu typicky v řádu dnů. Dodání „na klíč“ závisí na rozsahu a specifikaci — obvykle v řádu týdnů.</p>
+      </details>
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <summary class="font-semibold cursor-pointer">Pomůžete s povolením a projektem?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Ano. Zajistíme projekt, koordinaci vyjádření i nejrychlejší možnou cestu k povolení. O vše se postaráme.</p>
+      </details>
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <summary class="font-semibold cursor-pointer">Lze upravit typový dům?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Ano, typové projekty bereme jako základ. Dispozice, materiály i výbava jdou upravit podle priorit.</p>
+      </details>
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <summary class="font-semibold cursor-pointer">Jak probíhá nacenění?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Orientační cenu uvidíte ihned v konfigurátoru. Přesnou kalkulaci připravíme po krátkém hovoru a upřesnění parametrů. Ceny komunikujeme transparentně bez DPH.</p>
+      </details>
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <summary class="font-semibold cursor-pointer">Kde působíte?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Primárně Vlašim / Benešov a okolí, zakázky v rámci ČR dle kapacit.</p>
+      </details>
+      <details class="p-6 rounded-2xl border bg-white/80 dark:bg-slate-800/60 shadow-sm">
+        <summary class="font-semibold cursor-pointer">Jak je to se zárukami a servisem?</summary>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Dodržujeme zákonné záruky a nabízíme poprodejní podporu. O detailech se domluvíme podle rozsahu zakázky.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t bg-gradient-to-r from-sky-600 to-sky-700 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 text-sm flex flex-wrap gap-4 items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="h-5 w-auto text-white/90" viewBox="0 0 32 32" role="img" aria-label="Tvoje Hnízdo"><path fill="currentColor" d="M6 22V12l10-7 10 7v10h-3v-8.6L16 8l-7 5.4V22H6z"/></svg>
+        <span>© 2025 Tvoje Hnízdo / Bronekstav s.r.o.</span>
+      </div>
+      <nav class="flex gap-4">
+        <a href="#kontakt" class="hover:text-yellow-300">Kontakt</a>
+        <a href="#faq" class="hover:text-yellow-300">FAQ</a>
+        <a href="#pravni" class="hover:text-yellow-300" onclick="alert('Právní dokumenty napojíme v další iteraci.'); return false;">Právní</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>AOS.init({ once:true, duration:700, easing:'ease-out-cubic' });</script>
+  <script>
+  window.submitLead = async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    const status = document.getElementById('formStatus');
+    status.textContent = 'Odesílám…';
+    try {
+      const webhook = window.localStorage.getItem('TH_WEBHOOK') || '';
+      if (!webhook) {
+        status.textContent = 'Webhook nenalezen — použijeme mailto fallback.';
+        const body = encodeURIComponent(`Poptávka z webu Tvoje Hnízdo
+Jméno: ${data.jmeno}
+E-mail: ${data.email}
+Zpráva:
+${data.zprava}`);
+        window.location.href = `mailto:info@tvojehnízdo.cz?subject=Poptávka%20z%20webu&body=${body}`;
+        return;
+      }
+      await fetch(webhook, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      status.textContent = 'Děkujeme! Poptávka byla odeslána.';
+      e.target.reset();
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Chyba při odesílání. Napište prosím na info@tvojehnízdo.cz.';
+    }
+  }
+  </script>
+</body>
+</html>
