@@ -8,82 +8,125 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Upload static site to VPS (/tmp/th_github)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT || '22' }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "."
-          target: "/tmp/th_github"
-          overwrite: true
+      - name: Prepare SSH key and known_hosts
+        shell: bash
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+          # Ulož klíč do souboru
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
+          # Připrav known_hosts (ať se to nezastaví na potvrzení fingerprintu)
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${SSH_PORT:-22}" "${SSH_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-      - name: Remote deploy to /var/www/tvojehnizdo.com/html
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT || '22' }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -euo pipefail
-            DOMAIN="tvojehnizdo.com"
-            WEBROOT="/var/www/${DOMAIN}/html"
-            SITECONF="/etc/nginx/sites-available/${DOMAIN}"
-            apt-get update -y >/dev/null 2>&1 || true
-            apt-get install -y rsync jq >/dev/null 2>&1 || true
+      - name: Rsync static site to VPS (/tmp/th_github)
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          set -euo pipefail
+          # Přenést obsah repa (index.html, robots.txt, sitemap.xml, js/, css/, img/…)
+          rsync -az --delete \
+            -e "ssh -i key.pem -p ${SSH_PORT:-22} -o StrictHostKeyChecking=no" \
+            ./ "${SSH_USER}@${SSH_HOST}:/tmp/th_github"
 
-            mkdir -p "${WEBROOT}.new"
-            rsync -a --delete /tmp/th_github/ "${WEBROOT}.new"/
-            if [ -d "$WEBROOT" ]; then mv "$WEBROOT" "/var/www/${DOMAIN}/html.bak_$(date +%Y%m%d%H%M%S)"; fi
-            mv "${WEBROOT}.new" "$WEBROOT"
-            chown -R www-data:www-data "/var/www/${DOMAIN}"
+      - name: Remote deploy (switch to local static + nginx reload + CF purge + deploy log)
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          CF_ZONE:  ${{ secrets.CF_ZONE }}
+          CF_TOKEN: ${{ secrets.CF_TOKEN }}
+        run: |
+          set -euo pipefail
+          ssh -i key.pem -p ${SSH_PORT:-22} -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'bash -s' <<'BASH'
+          set -euo pipefail
+          DOMAIN="tvojehnizdo.com"
+          WEBROOT="/var/www/${DOMAIN}/html"
+          SITECONF="/etc/nginx/sites-available/${DOMAIN}"
 
-            cat > "$SITECONF" <<'NGINX'
-            server {
-                listen 80; listen [::]:80;
-                server_name tvojehnizdo.com www.tvojehnizdo.com;
-                include /etc/nginx/snippets/th-security.conf;
-                location /.well-known/acme-challenge/ { root /var/www/tvojehnizdo.com/html; }
-                return 301 https://$host$request_uri;
-            }
-            server {
-                listen 443 ssl http2; listen [::]:443 ssl http2;
-                server_name tvojehnizdo.com www.tvojehnizdo.com;
-                ssl_certificate     /etc/letsencrypt/live/tvojehnizdo.com/fullchain.pem;
-                ssl_certificate_key /etc/letsencrypt/live/tvojehnizdo.com/privkey.pem;
-                ssl_trusted_certificate /etc/letsencrypt/live/tvojehnizdo.com/chain.pem;
-                include /etc/nginx/snippets/th-security.conf;
-                add_header X-Content-Type-Options nosniff;
-                add_header X-Frame-Options SAMEORIGIN;
-                add_header Referrer-Policy strict-origin-when-cross-origin;
-                location = /status { default_type text/plain; return 200 "OK\n"; }
-                location ^~ /control/ { default_type application/json; root /var/www/tvojehnizdo.com/html; autoindex off; }
-                root /var/www/tvojehnizdo.com/html;
-                index index.html;
-                location / { try_files $uri $uri/ /index.html; }
-            }
-            NGINX
-            nginx -t && systemctl reload nginx
+          apt-get update -y >/dev/null 2>&1 || true
+          apt-get install -y rsync jq >/dev/null 2>&1 || true
 
-            # Purge Cloudflare cache (pokud máme secrets)
-            if [ -n "${{ secrets.CF_ZONE }}" ] && [ -n "${{ secrets.CF_TOKEN }}" ]; then
-              curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
-                -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" -H "Content-Type: application/json" \
-                --data '{"purge_everything":true}' >/dev/null || true
-            fi
+          # 1) Nasazení obsahu z /tmp/th_github
+          mkdir -p "${WEBROOT}.new"
+          rsync -az --delete /tmp/th_github/ "${WEBROOT}.new"/
+          if [ -d "$WEBROOT" ]; then mv "$WEBROOT" "/var/www/${DOMAIN}/html.bak_$(date +%Y%m%d%H%M%S)"; fi
+          mv "${WEBROOT}.new" "$WEBROOT"
+          chown -R www-data:www-data "/var/www/${DOMAIN}"
 
-            # Go-Live log
-            CTRL="$WEBROOT/control"; mkdir -p "$CTRL"
-            TS="$(date -Is)"; IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
-            if command -v jq >/dev/null 2>&1; then
-              find "$WEBROOT" -maxdepth 2 -type f | head -n 80 | sed "s|$WEBROOT/||g" | jq -R . | jq -s --arg ts "$TS" --arg ip "$IP" \
-                '{timestamp:$ts, vps_ip:$ip, files:.}' > "$CTRL/deploy.json"
-            else
-              echo "{\"timestamp\":\"$TS\",\"vps_ip\":\"$IP\"}" > "$CTRL/deploy.json"
-            fi
+          # 2) Nginx – čistá LOKÁLNÍ STATIKA (žádná proxy ani sub_filter)
+          cat > "$SITECONF" <<'NGINX'
+          server {
+              listen 80; listen [::]:80;
+              server_name tvojehnizdo.com www.tvojehnizdo.com;
+              include /etc/nginx/snippets/th-security.conf;
+              location /.well-known/acme-challenge/ { root /var/www/tvojehnizdo.com/html; }
+              return 301 https://$host$request_uri;
+          }
+          server {
+              listen 443 ssl http2; listen [::]:443 ssl http2;
+              server_name tvojehnizdo.com www.tvojehnizdo.com;
+
+              ssl_certificate     /etc/letsencrypt/live/tvojehnizdo.com/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/tvojehnizdo.com/privkey.pem;
+              ssl_trusted_certificate /etc/letsencrypt/live/tvojehnizdo.com/chain.pem;
+
+              include /etc/nginx/snippets/th-security.conf;
+              add_header X-Content-Type-Options nosniff;
+              add_header X-Frame-Options SAMEORIGIN;
+              add_header Referrer-Policy strict-origin-when-cross-origin;
+
+              location = /status { default_type text/plain; return 200 "OK\n"; }
+              location ^~ /control/ { default_type application/json; root /var/www/tvojehnizdo.com/html; autoindex off; }
+
+              root /var/www/tvojehnizdo.com/html;
+              index index.html;
+              location / { try_files $uri $uri/ /index.html; }
+          }
+          NGINX
+
+          nginx -t && systemctl reload nginx
+
+          # 3) Purge Cloudflare (pokud máme secrets v runneru – posíláme je přímo z runneru)
+          BASH
+          # Purge z GHA runneru (mimo SSH), jen pokud CF secrets existují
+          if [ -n "${CF_ZONE:-}" ] && [ -n "${CF_TOKEN:-}" ]; then
+            curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${CF_ZONE}/purge_cache" \
+              -H "Authorization: Bearer ${CF_TOKEN}" -H "Content-Type: application/json" \
+              --data '{"purge_everything":true}'
+          fi
+
+      - name: Write Go-Live log on VPS
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          set -euo pipefail
+          ssh -i key.pem -p ${SSH_PORT:-22} -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" 'bash -s' <<'BASH'
+          set -euo pipefail
+          DOMAIN="tvojehnizdo.com"
+          WEBROOT="/var/www/${DOMAIN}/html"
+          CTRL="$WEBROOT/control"; mkdir -p "$CTRL"
+          TS="$(date -Is)"; IP="$(hostname -I 2>/dev/null | awk "{print \$1}")"
+          if command -v jq >/dev/null 2>&1; then
+            find "$WEBROOT" -maxdepth 2 -type f | head -n 80 | sed "s|$WEBROOT/||g" \
+            | jq -R . | jq -s --arg ts "$TS" --arg ip "$IP" '{timestamp:$ts, vps_ip:$ip, files:.}' > "$CTRL/deploy.json"
+          else
+            echo "{\"timestamp\":\"$TS\",\"vps_ip\":\"$IP\"}" > "$CTRL/deploy.json"
+          fi
+          BASH
